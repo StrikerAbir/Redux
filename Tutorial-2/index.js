@@ -7,10 +7,13 @@ const { createStore } = require("redux");
 
 const INCREMENT='INCREMENT'
 const DECREMENT='DECREMENT'
-const ADD_USER="ADD_USER"
+const ADD_USER = "ADD_USER"
+const RESET = "RESET"
+const INCREMENT_BY_VALUE = "INCREMENT_BY_VALUE";
 //state
 const initialCounterState = {
     count: 0,
+    users: ['tishu']
 };
 
 const initialUsersState = {
@@ -30,28 +33,66 @@ const decrementCounterAction = () => {
     };
 }
 
-const addUser = () => {
+const incrementCounterByValue = (value) => {
+    return {
+        type: INCREMENT_BY_VALUE,
+        payload: value
+    }
+}
+
+const reset = () => {
+    return {
+        type: RESET,
+    }
+}
+
+const addUser = (value) => {
     return {
         type: ADD_USER,
-        payload: {name:"shakil"}
+        // payload: {name:"Jahanara"}
+        payload: value
     }
 }
 
 // reducer for counter
 const counterReducer = (state=initialCounterState, action) => {
     switch (action.type) {
-        case INCREMENT:
+      case INCREMENT:
+        return {
+          ...state,
+          count: state.count + 1,
+        };
+
+      case DECREMENT:
+        return {
+          ...state,
+          count: state.count - 1,
+            };
+        
+      case RESET:
+        return {
+          ...state,
+          count: 0,
+            };
+        
+      case INCREMENT_BY_VALUE:
+        return {
+          ...state,
+          count: state.count + action.payload,
+        };
+
+      default:
+        state;
+    }
+}
+
+const userReducer = (state=initialCounterState,action) => {
+    switch (action.type) {
+        case ADD_USER:
             return {
-                ...state,
+                users: [...state.users, action.payload],
                 count: state.count+1
             }
-            
-        case DECREMENT:
-            return {
-              ...state,
-              count: state.count - 1,
-            };
-
         default:
             state;
     }
@@ -70,3 +111,12 @@ store.dispatch(incrementCounterAction());
 store.dispatch(incrementCounterAction());
 store.dispatch(incrementCounterAction());
 store.dispatch(decrementCounterAction());
+store.dispatch(reset());
+store.dispatch(incrementCounterByValue(5));
+
+const store2 = createStore(userReducer);
+store2.subscribe(() => {
+  console.log(store2.getState());
+});
+
+store2.dispatch(addUser('Jahanara'))
